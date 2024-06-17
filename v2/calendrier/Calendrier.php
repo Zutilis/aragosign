@@ -37,17 +37,17 @@ class Calendrier {
     public function    addHeader()
     {
         $this->setFontSize(7);
-        $this->pdf->Cell(self::w_date, self::h_header, 'DATES', 1, 0, 'C');
-        $this->pdf->Cell(self::w_type_heure, self::h_header / 2, 'MATIN', 1, 0, 'C');
-        $this->pdf->Cell(self::w_type_heure, self::h_header / 2, 'APRES-MIDI', 1, 1, 'C');
+        $this->pdf->Cell((int) self::w_date, ((int) self::h_header), 'DATES', 1, 0, 'C');
+        $this->pdf->Cell((int) self::w_type_heure, ((int) self::h_header / 2), 'MATIN', 1, 0, 'C');
+        $this->pdf->Cell((int) self::w_type_heure, ((int) self::h_header / 2), 'APRES-MIDI', 1, 1, 'C');
 
-        $this->pdf->Cell(self::w_date, self::h_date, '', 0, 0, 'C');
+        $this->pdf->Cell((int) self::w_date, ((int) self::h_date), '', 0, 0, 'C');
 
         for ($i = 0; $i < 2; $i++) {
-            $this->pdf->Cell(self::w_heure, self::h_header / 2, 'Heures', 1, 0, 'C');
-            $this->pdf->Cell(self::w_matiere, self::h_header / 2, 'Matière', 1, 0, 'C');
-            $this->pdf->Cell(self::w_formateur, self::h_header / 2, 'Formateur', 1, 0, 'C');
-            $this->pdf->Cell(self::w_signature, self::h_header / 2, 'Signature', 1, 0, 'C');
+            $this->pdf->Cell((int) self::w_heure, ((int) self::h_header / 2), 'Heures', 1, 0, 'C');
+            $this->pdf->Cell((int) self::w_matiere, ((int) self::h_header / 2), 'Matière', 1, 0, 'C');
+            $this->pdf->Cell((int) self::w_formateur, ((int) self::h_header / 2), 'Formateur', 1, 0, 'C');
+            $this->pdf->Cell((int) self::w_signature, ((int) self::h_header / 2), 'Signature', 1, 0, 'C');
         }
 
         $this->pdf->Ln();
@@ -59,7 +59,7 @@ class Calendrier {
         $this->pdf->Cell(20, 24, $date, 1, 0, 'C');
 
         $row_count = max(count($morning_events), count($after_events));
-        $h_event = self::h_daily_event / $row_count;
+        $h_event = ((int) self::h_daily_event / $row_count);
 
         for ($i = 0; $i < $row_count; $i++)
         {
@@ -76,7 +76,7 @@ class Calendrier {
             $this->pdf->Ln();
 
             if ($i + 1 < $row_count)
-                $this->pdf->Cell(self::w_date, $h_event, '', 0, 0, 'C');
+                $this->pdf->Cell((int) self::w_date, ((int) $h_event), '', 0, 0, 'C');
         }
     }
 
@@ -85,21 +85,21 @@ class Calendrier {
         $is_null = $event == null;
 
         $this->setFontSize(5.5);
-        $this->hourEventCell(self::w_heure, $h_event, ($is_null ? 'x' : strval($event->getDuration())), $is_null);
-        $this->hourEventCell(self::w_matiere, $h_event, ($is_null ? 'x' : $event->getTitle()), $is_null);
-        $this->hourEventCell(self::w_formateur, $h_event, ($is_null ? 'x' : $event->getTeacher()), $is_null);
+        $this->hourEventCell((int) self::w_heure, ((int) $h_event), ($is_null ? 'x' : strval($event->getDuration())), $is_null);
+        $this->hourEventCell((int) self::w_matiere, ((int) $h_event), ($is_null ? 'x' : $event->getTitle()), $is_null);
+        $this->hourEventCell((int) self::w_formateur, ((int) $h_event), ($is_null ? 'x' : $event->getTeacher()), $is_null);
 
         // if (!$is_null && $this->signfile != '') {
         //     $this->pdf->Image($this->signfile, $this->pdf->GetX()+1, $this->pdf->GetY()+1, 
         //         self::w_signature-2, $h_event-2, 'PNG', '', 'C', true);
         // }
 
-        $this->hourEventCell(self::w_signature, $h_event, ' ', $is_null);
+        $this->hourEventCell(self::w_signature, ((int) $h_event), ' ', $is_null);
     }
 
     private function    hourEventCell($w_cell, $h_cell, $txt, $fill=false)
     {
-        $this->pdf->MultiCell($w_cell, $h_cell, $txt, 1, 'C', $fill, 0, '', '', true, 0, false, true, $h_cell, 'M');
+        $this->pdf->MultiCell($w_cell, ((int) $h_cell), $txt, 1, 'C', $fill, 0, '', '', true, 0, false, true, ((int) $h_cell), 'M');
     }
 
     private function    setFontSize($font_size)

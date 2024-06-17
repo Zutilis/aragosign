@@ -15,6 +15,7 @@
     --dark-white: #ddd;
     --black: #000000;
 
+    --font-size-l: 15px;
     --font-size-m: 14px;
     --font-size-s: 12px;
 }
@@ -26,8 +27,17 @@
     font-family: 'Helvetica Neue', Arial, sans-serif;
 }
 
+label {
+    font-size: var(--font-size-l);
+}
+
 p, a {
     font-size: var(--font-size-m);
+}
+
+a {
+    text-decoration: none;
+    color: var(--blue);
 }
 
 .font-m {
@@ -66,7 +76,7 @@ h2 {
 
 label {
     display: block;
-    margin-bottom: 0.5rem;
+    margin-bottom: .5rem;
     color: var(--grey);
 }
 
@@ -77,7 +87,7 @@ input[type="file"] {
 .custom-file-label {
     display: block;
     width: 100%;
-    padding: 0.5rem;
+    padding: calc(.5rem - .5px);
     border: 2px solid var(--dark-white);
     border-radius: 4px;
     cursor: pointer;
@@ -92,6 +102,7 @@ input[type="file"] {
 
 input[type="month"], input[type="text"] {
     width: 100%;
+    height: 38px;
     padding: 0.5rem;
     border: 2px solid var(--dark-white);
     border-radius: 4px;
@@ -150,51 +161,50 @@ input[type="month"], input[type="text"] {
     margin-top: 1rem;
 }
 
-.form-progress {
-    display: flex;
-    align-items: center;
-    position: relative;
+.progress-container {
     width: 100%;
+    background-color: var(--dark-off-white);
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.progress-bar {
+    width: 0%;
     height: 10px;
-    margin: 15px 0px;
-
-    span {
-        position: absolute;
-        height: 100%;
-        border-radius: 15px;
-        transition: all .3s ease-in;
-    }
-
-    .form-progress-back {
-        z-index: 2;
-        background-color: var(--dark-off-white);
-        width: 100%;
-    }
-    .form-progress-count {
-        z-index: 3;
-        background-color: var(--blue);
-    }
+    background-color: var(--blue);
+    border-radius: 5px;
+    transition: all 0.3s ease-in-out;
 }
 
 .form-nav {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    text-align: right;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    grid-column-gap: 0px;
+    grid-row-gap: 0px;
     margin-top: 2rem;
 
     button, input {
         background: none;
         border: none;
         color: var(--blue);
-        /* font-size: 1rem; */
         cursor: pointer;
         display: flex;
         flex-direction: row; 
     }
 
+    .form-nav-prev {
+        grid-area: 1 / 1 / 2 / 2;
+    }
+
+    .form-nav-next {
+        grid-area: 1 / 2 / 2 / 3;
+        justify-content: right;
+    }
+
     .form-nav-prev, .form-nav-next {
         display: flex;
+        align-items: center;
         flex-direction: row; 
         color: var(--blue);
     }

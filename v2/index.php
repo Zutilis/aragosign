@@ -1,46 +1,22 @@
 <!DOCTYPE html>
 <html lang="fr">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
     <link rel="stylesheet" href="styles/styles.css">
 </head>
-
 <body>
     <div class="calendrier-container">
         <div class="container" enctype="multipart/form-data">
-            <form method="post">
-                <?php 
-                    print_r($_POST);
-                    // $items = count($_POST);
-                    $page_count = isset($_POST['page']) ? intval($_POST['page']) : 1;
-
-                    if (isset($_POST['prenom']) && isset($_POST['nom']))
-                    {
-                        if (isset($_POST['reset']) && intval($_POST['reset']) == 1) 
-                        {
-                            echo 'test';
-                            $_POST['reset'] = 0;
-                        }
-                        else 
-                            $page_count = 2;
-                    }
-
-                    $progress = $page_count / 2 * 100;
-                ?>
-                
-                <input type="hidden" id="page_id" name="page" value="<?php echo $page_count; ?>">
-                <h2>Calendrier</h2>
-                <div class="form-progress">
-                    <span class="form-progress-back"></span>
-                    <span class="form-progress-count" style="width: <?php echo $progress; ?>%"></span>
-                </div>
-
-                <?php 
-                if ($page_count == 1) {
-                ?>  
+            <h2>Calendrier</h2>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
+            </div>
+            <?php 
+            if (!isset($_POST['prenom']) || !isset($_POST['nom']) || isset($_POST['previous2'])) {
+            ?>  
+                <form method="post">
                     <div class="form-group">
                         <label for="prenom">Entrer votre prénom</label>
                         <input type="text" name="prenom" id="prenom" placeholder="Prénom">
@@ -65,11 +41,18 @@
                             </svg>
                         </button>
                     </div>
-                <?php
-                } else if ($page_count == 2) {
-                ?>
+                </form>
+            <?php
+            } else if (isset($_POST['prenom']) && isset($_POST['nom'])
+                    && !isset($_POST['month_planning']) && !isset($_POST['planningFile'])) { // Page 2
+            ?>
+                <form method="post" enctype="multipart/form-data">
+                    <input type="hidden" name="prenom" value="<?php echo $_POST['prenom']; ?>">
+                    <input type="hidden" name="nom" value="<?php echo $_POST['nom']; ?>">
                     <div class="form-group">
-                        <label for="planningFile">Sélectionner le planning à utiliser</label>
+                        <label for="planningFile">Sélectionner le planning à utiliser 
+                            (<a class="font-size-m" href="help.php" target="__blank">Aide</a>)
+                        </label>
                         <input type="file" name="planningFile" id="planningFile" class="file-input" onchange="handleFileSelect(event, 'planningFilePreview', 'planningFileCancel')">
                         <label for="planningFile" class="custom-file-label">Choisir un fichier</label>
                         <div id="planningFilePreview" class="file-preview" style="display:none;">
@@ -89,9 +72,8 @@
                     <div class="form-error" style="display:none;">
                         <p id="form-error-text">Test</p>
                     </div>
-                    <!-- <button type="submit" name="submit">Télécharger le calendrier</button> -->
                     <div class="form-nav">
-                        <button type="submit" name="reset" value="1" class="form-nav-prev">
+                        <button type="reset" name="previous2" value="1" class="form-nav-prev" id="previous2" onclick="window.history.back();">
                             <svg viewBox="0 0 24 24" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#007bff">
                                 <g id="SVGRepo_bgCarrier" stroke-width="0"></g>
                                 <g id="SVGRepo_tracerCarrier" stroke-linecap="round" stroke-linejoin="round"></g>
@@ -120,12 +102,88 @@
                             </svg>
                         </button>
                     </div>
-                <?php
+                </form>
+            <?php
+            } else { // All data collected
+                require_once('utils/Utils.php');
+                require_once('file/FileUploader.php');
+                require_once('events/EventProcessor.php');
+                require_once('calendrier/CalendrierOutput.php');
+
+                $root = $_SERVER['DOCUMENT_ROOT'];
+                $plannings_path = 'plannings/';
+                $outputPath = __DIR__ . '/uploads/output.pdf';
+
+                $year = intval(explode('-', $_POST['month_planning'])[0]);
+                $month = intval(explode('-', $_POST['month_planning'])[1]);
+
+                if ($month <= 0 || $month > 12) {
+                    echo "Sorry, the month is invalid";
+                    return;
                 }
-                ?>
-            </form>
+
+                $planningFile = $_FILES["planningFile"];
+                $planningFilePath = $plannings_path . basename($planningFile["name"]);
+
+                try {
+
+                    echo 'A';
+
+                    $planningUploader = new FileUploader($_FILES["planningFile"], $planningFilePath);
+                    $planningUploader->upload();
+
+                    echo 'B';
+
+                    $eventProcessor = new EventProcessor($planningFilePath, $month, $year);
+                    $calendrier = $eventProcessor->process();
+
+                    echo 'C';
+
+                    $calendrierOutput = new CalendrierOutput($calendrier, $outputPath);
+                    $calendrierOutput->generateOutput();
+
+                } catch (Exception $e) {
+                    echo $e->getMessage();
+                }
+
+                unlink($planningFilePath);
+                unlink($signFilePath);
+                unlink($outputPath);
+            }
+            ?>
+
         </div>
     </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const progressBar = document.getElementById('progress-bar');
+            let progress = localStorage.getItem('progress') || 0;
+
+            // Set initial progress width without transition
+            progressBar.style.width = progress + '%';
+            progressBar.style.transition = 'none';
+
+            // Allow reflow, then add the transition back
+            requestAnimationFrame(() => {
+                progressBar.style.transition = 'width 0.5s ease-in-out';
+                progressBar.style.width = progress + '%';
+            });
+
+            <?php if (!isset($_POST['prenom']) || !isset($_POST['nom']) || isset($_POST['previous2'])) { ?>
+                progress = 0;
+            <?php } else if (isset($_POST['prenom']) && isset($_POST['nom'])) { ?>
+                progress = 50;
+            <?php } ?>
+
+            // Update progress bar with transition
+            setTimeout(() => {
+                progressBar.style.width = progress + '%';
+            }, 100);
+
+            // Save current progress to localStorage
+            localStorage.setItem('progress', progress);
+        });
+    </script>
     <script>
         function formatBytes(bytes, decimals = 2) {
             if (!+bytes) return '0 B';
