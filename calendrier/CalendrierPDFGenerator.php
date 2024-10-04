@@ -57,7 +57,7 @@ class CalendrierPDFGenerator {
         $this->school_manager->loadAll();  // Charge tous les événements du planning
 
         // Instancie et prépare le calendrier PDF
-        $this->calendrier = new Calendrier($this->data);
+        $this->calendrier = new CalendrierPDFBuilder($this->data);
         $this->calendrier->addHeader();  // Ajoute l'entête au PDF (titre, infos utilisateur, etc.)
     }
 

@@ -21,7 +21,7 @@
 			$root = $_SERVER['DOCUMENT_ROOT'];
 
 			if (isset($_POST['download'])) {
-				
+
 				require_once('utils/Utils.php');
 				require_once('file/FileUtils.php');
 				require_once('file/FileUploader.php');
@@ -56,6 +56,10 @@
 						unlink($planningFilePath);
 					}
 				} catch (Exception $e) {
+					if (file_exists($planningFilePath)) {
+						unlink($planningFilePath);
+					}
+
 					// Gère les erreurs et affiche un message à l'utilisateur
 					echo '
 						<div class="form-error">
@@ -254,9 +258,11 @@
 		 * Passe à l'étape suivante du formulaire, si possible.
 		 */
 		function nextStep() {
-			if (currentStep < steps.length - 1) {
-				currentStep++;
-				showStep(currentStep);
+			if (validatePreviousSteps()) {
+				if (currentStep < steps.length - 1) {
+					currentStep++;
+					showStep(currentStep);
+				}
 			}
 		}
 
@@ -270,8 +276,43 @@
 			}
 		}
 
+		/**
+		 * Valide tous les champs obligatoires des étapes précédentes avant de permettre la navigation.
+		 * 
+		 * @return {boolean} true si tous les champs requis sont remplis, sinon false.
+		 */
+		function validatePreviousSteps() {
+			// Sélectionne tous les champs des étapes précédentes
+			for (let i = 0; i <= currentStep; i++) {
+				const inputs = steps[i].querySelectorAll('input[required], select[required], textarea[required]');
+				for (let input of inputs) {
+					if (!input.checkValidity()) {
+						// Affiche une erreur pour l'utilisateur si un champ requis est vide
+						input.reportValidity();
+						return false;
+					}
+				}
+			}
+			return true;
+		}
+
 		// Initialisation de la première étape
 		showStep(currentStep);
+	</script>
+
+	<script>
+		// Ajout de la fonctionnalité pour les touches "Entrée", "Flèche gauche" et "Flèche droite"
+		document.addEventListener('keydown', function(event) {
+			if (event.key === 'Enter' || event.key === 'ArrowRight') {
+				if (currentStep < steps.length - 1) {
+					event.preventDefault();
+					nextStep();
+				}
+			} else if (event.key === 'ArrowLeft') {
+				event.preventDefault(); // Empêche le comportement par défaut de la touche Flèche gauche
+				prevStep();
+			}
+		});
 	</script>
 
 	<script>

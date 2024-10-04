@@ -271,10 +271,6 @@ input[type="month"], input[type="text"] {
         color: var(--blue);
     }
 
-    .form-nav-text {
-        padding: .4rem;
-    }
-
     .form-nav-download .form-nav-text {
         
         border-radius: 10px;
