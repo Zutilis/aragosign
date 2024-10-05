@@ -23,7 +23,7 @@
 			if (isset($_POST['download'])) {
 
 				require_once('utils/Utils.php');
-				require_once('file/FileUtils.php');
+				require_once('utils/FileUtils.php');
 				require_once('events/SchoolEventManager.php');
 				require_once('calendrier/CalendrierPDFGenerator.php');
 
