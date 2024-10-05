@@ -28,7 +28,7 @@ function truncate($str, $nb_chars)
 {
     // Si la chaîne dépasse la longueur maximale, elle est tronquée et '..' est ajouté
     if (strlen($str) > $nb_chars) {
-        return substr($str, 0, $nb_chars) . '..';
+        return substr($str, 0, $nb_chars-2) . '..';
     }
 
     // Sinon, la chaîne est retournée telle quelle
