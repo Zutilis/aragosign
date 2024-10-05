@@ -1,6 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
 	let currentStep = 0;
 	const steps = document.querySelectorAll('.form-step');
+
+	const progressStep = document.getElementById('progress-step');
+	const progressStepMax = document.getElementById('progress-step-max');
 	const progressbar = document.getElementById('progress-bar');
 
 	const nexts = document.querySelectorAll('.form-nav-next');
@@ -40,7 +43,9 @@ document.addEventListener("DOMContentLoaded", function () {
 		steps.forEach((step, index) => {
 			step.style.display = index === stepIndex ? 'block' : 'none';
 		});
-		progressbar.style.width = (currentStep / (steps.length - 1) * 100) + '%';
+		progressbar.style.width = Math.max(1, currentStep / (steps.length - 1) * 100) + '%';
+		progressStep.innerHTML = '' + currentStep;
+		progressStepMax.innerHTML = '-' + (steps.length - 1- currentStep);
 	}
 
 	/**

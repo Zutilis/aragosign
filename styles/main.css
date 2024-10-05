@@ -75,7 +75,7 @@ h2 {
 .calendrier-container, .help-container {
     background-color: var(--white);
     margin: 5%;
-    padding: 2rem;
+    padding: 1.5rem;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     height: 100%;
@@ -231,16 +231,25 @@ input[type="month"], input[type="text"] {
     background-color: var(--dark-blue);
 }
 
+.progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 2%;
+    margin-bottom: 20px;
+}
+
 .progress-container {
+    height: 10px;
     width: 100%;
     background-color: var(--dark-off-white);
     border-radius: 5px;
-    margin-bottom: 20px;
 }
 
 .progress-bar {
     width: 0%;
-    height: 10px;
+    height: 100%;
     background-color: var(--blue);
     border-radius: 5px;
     transition: all 0.3s ease-in-out;
@@ -269,6 +278,10 @@ input[type="month"], input[type="text"] {
 
     .form-nav-next {
         grid-area: 1 / 2 / 2 / 3;
+    }
+
+    .right {
+        display: flex;
         justify-content: right;
     }
 

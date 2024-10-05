@@ -12,15 +12,19 @@
 	<div class="calendrier">
 		<div class="calendrier-container" enctype="multipart/form-data">
 			<h2>Générateur</h2>
-			<div class="progress-container">
-				<div class="progress-bar" id="progress-bar" style="width: 0;"></div>
+			<div class="progress">
+				<p id="progress-step"></p>
+				<div class="progress-container">
+					<div class="progress-bar" id="progress-bar" style="width: 0%;"></div>
+				</div>
+				<p id="progress-step-max"></p>
 			</div>
 
 			<?php
 			session_start();
 			$root = $_SERVER['DOCUMENT_ROOT'];
 
-			if (isset($_POST['download'])) {
+			if (isset($_POST['absenceStep'])) {
 
 				require_once('utils/Utils.php');
 				require_once('utils/FileUtils.php');
@@ -40,7 +44,6 @@
 					// // Génère le PDF à partir du fichier ICS
 					$calendrierOutput = new CalendrierPDFGenerator($_POST, $schoolManager, $pdfFilePath);
 					$calendrierOutput->generate();
-
 				} catch (Exception $e) {
 					// Gère les erreurs et affiche un message à l'utilisateur
 					echo '
@@ -69,10 +72,13 @@
 							<input type="text" name="nom" id="nom" placeholder="Nom" value="<?php echo isset($_POST['nom']) ? $_POST['nom'] : ''; ?>" required>
 						</div>
 						<div class="form-nav">
-							<button type="button" class="form-nav-next">
-								<p class="form-nav-text">Suivant</p>
-								<img src="assets/navnext.svg" alt="">
-							</button>
+							<div class="left"></div>
+							<div class="right">
+								<button type="button" class="form-nav-next">
+									<p class="form-nav-text">Suivant</p>
+									<img src="assets/navnext.svg" alt="">
+								</button>
+							</div>
 						</div>
 					</div>
 
@@ -93,14 +99,18 @@
 							<input type="text" name="classe" id="classe" placeholder="Classe" value="<?php echo isset($_POST['classe']) ? $_POST['classe'] : ''; ?>" required>
 						</div>
 						<div class="form-nav">
-							<button type="button" class="form-nav-prev">
-								<img src="assets/navprev.svg" alt="">
-								<p class="form-nav-text">Précédent</p>
-							</button>
-							<button type="button" class="form-nav-next">
-								<p class="form-nav-text">Suivant</p>
-								<img src="assets/navnext.svg" alt="">
-							</button>
+							<div class="left">
+								<button type="button" class="form-nav-prev">
+									<img src="assets/navprev.svg" alt="">
+									<p class="form-nav-text">Précédent</p>
+								</button>
+							</div>
+							<div class="right">
+								<button type="button" class="form-nav-next">
+									<p class="form-nav-text">Suivant</p>
+									<img src="assets/navnext.svg" alt="">
+								</button>
+							</div>
 						</div>
 					</div>
 
@@ -127,46 +137,34 @@
 							<input type="month" id="month_planning" name="month_planning" min="2023-09" max="2025-07" value="<?php echo date('Y') . '-' . date('m'); ?>" required>
 						</div>
 						<div class="form-nav">
-							<button type="button" class="form-nav-prev">
-								<img src="assets/navprev.svg" alt="">
-								<p class="form-nav-text">Précédent</p>
-							</button>
-							<button type="button" class="form-nav-next">
-								<p class="form-nav-text">Suivant</p>
-								<img src="assets/navnext.svg" alt="">
-							</button>
+							<div class="left">
+								<button type="button" class="form-nav-prev">
+									<img src="assets/navprev.svg" alt="">
+									<p class="form-nav-text">Précédent</p>
+								</button>
+							</div>
+							<div class="right">
+								<button type="button" class="form-nav-next">
+									<p class="form-nav-text">Suivant</p>
+									<img src="assets/navnext.svg" alt="">
+								</button>
+							</div>
 						</div>
 					</div>
 
 					<!-- Étape 4 -->
 					<div class="form-step" id="step4" style="display: none;">
 						<div class="form-group">
-
-						</div>
-						<div class="form-nav">
-							<button type="button" class="form-nav-prev">
-								<img src="assets/navprev.svg" alt="">
-								<p class="form-nav-text">Précédent</p>
-							</button>
-							<button type="button" class="form-nav-next">
-								<p class="form-nav-text">Suivant</p>
-								<img src="assets/navnext.svg" alt="">
-							</button>
-						</div>
-					</div>
-
-					<!-- Étape 5 -->
-					<div class="form-step" id="step5" style="display: none;">
-						<div class="form-group">
 							<h4 class="form-subtitle">Le planning est prêt à être téléchargé !</h4>
-							<button type="submit" name="download" class="form-button">Télécharger</button>
+							<button type="submit" name="absenceStep" class="form-button">Télécharger</button>
 						</div>
 						<div class="form-nav">
-							<button type="button" class="form-nav-prev">
-								<img src="assets/navprev.svg" alt="">
-								<p class="form-nav-text">Précédent</p>
-							</button>
-
+							<div class="left">
+								<button type="button" class="form-nav-prev">
+									<img src="assets/navprev.svg" alt="">
+									<p class="form-nav-text">Précédent</p>
+								</button>
+							</div>
 						</div>
 					</div>
 				</form>
@@ -179,4 +177,5 @@
 	<script type="text/javascript" src="assets/js/stepForm.js"></script>
 	<script type="text/javascript" src="assets/js/planningFile.js"></script>
 </body>
+
 </html>
