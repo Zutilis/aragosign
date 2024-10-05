@@ -13,7 +13,7 @@
 		<div class="container" enctype="multipart/form-data">
 			<h2>Calendrier</h2>
 			<div class="progress-container">
-				<div class="progress-bar" id="progress-bar"></div>
+				<div class="progress-bar" id="progress-bar" style="width: 0;"></div>
 			</div>
 
 			<?php
