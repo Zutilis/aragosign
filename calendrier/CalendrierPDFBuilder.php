@@ -4,7 +4,7 @@ require_once('fpdf/fpdf.php');
 
 class CalendrierPDFBuilder {
     
-    const W_SIGNATURE = 18; // Largeur de la colonne Signature
+    const W_SIGNATURE = 20; // Largeur de la colonne Signature
     const W_FORMATEUR = 20; // Largeur de la colonne Formateur
     const W_MATIERE = 35;   // Largeur de la colonne Matière
     const W_HEURE = 10;     // Largeur de la colonne Heures
@@ -201,9 +201,9 @@ class CalendrierPDFBuilder {
         $is_null = $event == null;
 
         $this->_setFontSize(6);
-        $this->_hourEventCell(self::W_HEURE, $h_event, $is_null ? '' : strval($event->getDuration()), $is_null);
-        $this->_hourEventCell(self::W_MATIERE, $h_event, $is_null ? '' : $event->getTitle(), $is_null);
-        $this->_hourEventCell(self::W_FORMATEUR, $h_event, $is_null ? '' : $event->getTeacher(), $is_null);
+        $this->_hourEventCell(self::W_HEURE, $h_event, $is_null ? '' : strval($event->getDuration()), $is_null, 5);
+        $this->_hourEventCell(self::W_MATIERE, $h_event, $is_null ? '' : $event->getTitle(), $is_null, 25);
+        $this->_hourEventCell(self::W_FORMATEUR, $h_event, $is_null ? '' : $event->getTeacher(), $is_null, 15);
         $this->_hourEventCell(self::W_SIGNATURE, $h_event, ' ', false);
     }
 
@@ -215,9 +215,9 @@ class CalendrierPDFBuilder {
      * @param bool $fill Si la cellule doit être remplie ou non
      * @return void
      */
-    private function _hourEventCell($w_cell, $h_cell, $txt, $fill = false)
+    private function _hourEventCell($w_cell, $h_cell, $txt, $fill = false, $truncate=25)
     {
-        $this->pdf->Cell($w_cell, $h_cell, truncate($txt, 25), 1, 0, 'C', $fill, '');
+        $this->pdf->Cell($w_cell, $h_cell, truncate($txt, $truncate), 1, 0, 'C', $fill, '');
     }
 
     /**

@@ -83,7 +83,7 @@ class SchoolEvent {
      */
     public function getCompleteDate()
     {
-        return ($this->day . '/' . $this->month . '/' . $this->year);
+        return sprintf('%02d/%02d/%04d', $this->day, $this->month, $this->year);
     }
 
     /**

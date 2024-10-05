@@ -49,6 +49,12 @@ a {
     color: var(--blue);
 }
 
+h2 {
+    text-align: center;
+    margin-bottom: 1.5rem;
+    color: var(--dark-grey);
+}
+
 .font-m {
     font-size: var(--font-size-m);
 }
@@ -56,28 +62,30 @@ a {
     font-size: var(--font-size-s);
 }
 
-.calendrier-container {
+.calendrier, .help {
     background-color: var(--light-off-white);
     display: flex;
     justify-content: center;
     align-items: center;
-    height: 100vh;
+    height: 100%;
+    width: 100%;
+    min-height: 100vh;
 }
 
-.container {
+.calendrier-container, .help-container {
     background-color: var(--white);
+    margin: 5%;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    height: 100%;
     width: 100%;
-    max-width: 400px;
 }
 
-h2 {
-    text-align: center;
-    margin-bottom: 1.5rem;
-    color: var(--dark-grey);
+.calendrier-container {
+    max-width: 500px;
 }
+
 
 .form-group {
     margin: 2rem 0 1rem 0;
@@ -281,7 +289,7 @@ input[type="month"], input[type="text"] {
         color: var(--white);
     }
 
-    svg {
+    svg, img {
         height: 1rem;
         width: 1rem;
     }

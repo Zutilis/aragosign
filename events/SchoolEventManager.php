@@ -36,13 +36,13 @@ class SchoolEventManager {
             // Extraction des informations du champ 'SUMMARY' pour obtenir le titre et l'enseignant
             $summary = explode(' - ', $this->parser->getValue($event, 'SUMMARY'));
             $title = remove($summary[0], '*', '\\');  // Supprime les caractères indésirables du titre
-            $teacher = count($summary) > 1 ? $summary[1] : 'Inconnu';  // Récupère l'enseignant ou 'Inconnu'
+            $teacher = count($summary) > 1 ? $summary[1] : '';  // Récupère l'enseignant ou 'Inconnu'
             
             $dstart = $this->parser->getValue($event, 'DTSTART'); // Date et heure de début
             $dend = $this->parser->getValue($event, 'DTEND');     // Date et heure de fin
 
-            $hourStart = $this->toHour($dstart, 1);
-            $hourEnd = $this->toHour($dend, 1);
+            $hourStart = $this->toHour($dstart);
+            $hourEnd = $this->toHour($dend);
 
             // Calcul du nombre de demi-journées nécessaires en fonction de la durée de l'événement
             $halfDays = ceil(($hourEnd - $hourStart) / 2);
