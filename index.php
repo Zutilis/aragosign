@@ -24,42 +24,24 @@
 
 				require_once('utils/Utils.php');
 				require_once('file/FileUtils.php');
-				require_once('file/FileUploader.php');
-				require_once('calendrier/CalendrierPDFGenerator.php');
 				require_once('events/SchoolEventManager.php');
+				require_once('calendrier/CalendrierPDFGenerator.php');
 
 				try {
-					// Génère un nom unique pour le fichier ICS uploadé
-					$planningFilePath = generateIcsFileName(
-						__DIR__,
-						$_FILES["planningFile"]["name"],
-						$_POST['nom'],
-						$_POST['prenom']
-					);
 
-					// Génère le nom du fichier PDF basé sur le nom et prénom de l'utilisateur
-					$pdfFilePath = generatePdfFileName(
-						$_POST['nom'],
-						$_POST['prenom']
-					);
+					$planningFilePath = $_FILES["planningFile"]["tmp_name"];
 
-					// Upload le fichier ICS et vérifie les erreurs possibles
-					$planningUploader = new FileUploader($_FILES["planningFile"], $planningFilePath);
-					$planningUploader->upload();
+					// Instancie le gestionnaire d'événements en charge de charger le fichier de planning
+					$schoolManager = new SchoolEventManager($planningFilePath);
+					$schoolManager->loadAll();  // Charge tous les événements du planning
 
-					// Génère le PDF à partir du fichier ICS
-					$calendrierOutput = new CalendrierPDFGenerator($planningFilePath, $pdfFilePath, $_POST);
+					$pdfFilePath = generatePdfFileName($_POST['nom'], $_POST['prenom']);
+
+					// // Génère le PDF à partir du fichier ICS
+					$calendrierOutput = new CalendrierPDFGenerator($_POST, $schoolManager, $pdfFilePath);
 					$calendrierOutput->generate();
 
-					// Supprime le fichier ICS après utilisation
-					if (file_exists($planningFilePath)) {
-						unlink($planningFilePath);
-					}
 				} catch (Exception $e) {
-					if (file_exists($planningFilePath)) {
-						unlink($planningFilePath);
-					}
-
 					// Gère les erreurs et affiche un message à l'utilisateur
 					echo '
 						<div class="form-error">
@@ -158,7 +140,7 @@
 							<label for="planningFile">Sélectionner le planning à utiliser
 								(<a class="font-size-m" href="help.html" target="__blank">Aide</a>)
 							</label>
-							<input type="file" name="planningFile" id="planningFile" class="file-input" onchange="handleFileSelect(event, 'planningFilePreview', 'planningFileCancel')" required>
+							<input type="file" name="planningFile" id="planningFile" class="file-input" accept=".ics" onchange="handleFileSelect(event, 'planningFilePreview', 'planningFileCancel')" required>
 							<label for="planningFile" class="custom-file-label">Choisir un fichier (format .ics)</label>
 							<div id="planningFilePreview" class="file-preview" style="display:none;">
 								<div class="file-image">

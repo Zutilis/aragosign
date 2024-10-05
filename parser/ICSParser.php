@@ -2,51 +2,60 @@
 
 class ICSParser {
 
-    // Tableau des clés d'événements courantes dans un fichier ICS
     private $keys = array('BEGIN', 'UID', 'DTSTAMP', 'DESCRIPTION', 
                           'DTSTART', 'DTEND', 'LOCATION', 'SUMMARY', 'END');
 
-    // Propriétés privées
-    private $filename;  // Chemin du fichier ICS
-    private $calendar;  // Contenu du fichier ICS
+    private $filename;
 
-    /**
-     * Constructeur de la classe ICSParser.
-     * Lit le contenu du fichier ICS et initialise la propriété correspondante.
-     * 
-     * @param string $filename Chemin vers le fichier ICS
-     */
     public function __construct($filename) 
     {
         $this->filename = $filename;
-
-        // Récupère le contenu du fichier ICS
-        $this->calendar = file_get_contents($filename);
     }
 
     /**
-     * Extrait la valeur entre deux clés spécifiques dans un événement ICS.
+     * Fonction principale pour lire et traiter les événements directement.
      * 
-     * @param string $str Chaîne représentant un événement ICS
-     * @param int $i_start Index de la clé de début dans $keys
-     * @param int $i_end Index de la clé de fin dans $keys
-     * @return string Valeur extraite entre les deux clés, ou une chaîne vide si non trouvée
+     * @param callable $callback Fonction de traitement à appeler pour chaque événement
      */
-    private function btw($str, $i_start, $i_end)
+    public function parseEvents(callable $callback)
     {
-        $key_start = $this->keys[$i_start] . ':';  // Marqueur de début
-        $key_end = $this->keys[$i_end] . ':';      // Marqueur de fin
+        $currentEvent = '';
+        $insideEvent = false;
 
-        // Divise la chaîne à partir du marqueur de début
-        $arr = explode($key_start, $str);
-        if (isset($arr[1])) {
-            // Divise à partir du marqueur de fin pour extraire la valeur
-            $arr = explode($key_end, $arr[1]);
-            return trim($arr[0]);  // Supprime les espaces superflus et retourne la valeur
+        // Ouvre le fichier en lecture
+        $handle = fopen($this->filename, "r");
+
+        if ($handle) {
+            // Parcourt le fichier ligne par ligne
+            while (($line = fgets($handle)) !== false) {
+                $trimmedLine = trim($line);
+
+                // Détection du début d'un événement
+                if (strpos($trimmedLine, 'BEGIN:VEVENT') !== false) {
+                    $insideEvent = true;
+                    $currentEvent = $trimmedLine . "\n"; // Commence un nouvel événement
+                } 
+                // Détection de la fin de l'événement
+                elseif (strpos($trimmedLine, 'END:VEVENT') !== false) {
+                    $currentEvent .= $trimmedLine . "\n"; // Ajoute la ligne de fin
+                    $insideEvent = false;
+
+                    // Appel de la fonction de callback pour traiter l'événement
+                    $callback($currentEvent);
+
+                    // Réinitialisation pour le prochain événement
+                    $currentEvent = '';
+                } 
+                // Pendant que nous sommes dans un événement, on accumule les lignes
+                elseif ($insideEvent) {
+                    $currentEvent .= $trimmedLine . "\n";
+                }
+            }
+
+            fclose($handle); // Ferme le fichier après traitement
+        } else {
+            throw new Exception("Impossible d'ouvrir le fichier ICS.");
         }
-
-        // Retourne une chaîne vide si le marqueur n'est pas trouvé
-        return '';
     }
 
     /**
@@ -58,30 +67,12 @@ class ICSParser {
      */
     public function getValue($event, $key)
     {
-        // Cherche l'index de la clé dans le tableau $keys
-        $i_start = array_search(strtoupper($key), $this->keys);
-
-        // Si la clé n'est pas trouvée, retourne null
-        if ($i_start === false) {
-            return null;
+        $pattern = '/^' . preg_quote($key, '/') . ':(.*)$/m'; // Pattern pour trouver la clé
+        if (preg_match($pattern, $event, $matches)) {
+            return trim($matches[1]); // Retourne la valeur associée à la clé
         }
 
-        // Détermine l'index de la clé suivante, ou 0 si c'est la dernière clé
-        $i_end = $i_start + 1 >= count($this->keys) ? 0 : $i_start + 1;
-
-        // Retourne la valeur extraite entre les deux clés
-        return $this->btw($event, $i_start, $i_end);
-    }
-
-    /**
-     * Extrait tous les événements à partir du fichier ICS.
-     * 
-     * @return array Tableau de chaînes représentant chaque événement ICS
-     */
-    public function getEvents()
-    {
-        // Sépare les événements en utilisant 'BEGIN:VEVENT' comme délimiteur
-        return explode('BEGIN:VEVENT', $this->calendar);
+        return null;
     }
 
     /**
@@ -92,15 +83,5 @@ class ICSParser {
     public function getFilename()
     {
         return $this->filename;
-    }
-
-    /**
-     * Retourne le contenu du fichier ICS.
-     * 
-     * @return string Contenu du fichier ICS
-     */
-    public function getCalendar()
-    {
-        return $this->calendar;
     }
 }

@@ -30,28 +30,41 @@ class SchoolEventManager {
      */
     public function loadAll()
     {
-        // Récupère tous les événements présents dans le fichier ICS
-        $events = $this->parser->getEvents();
-
-        // Boucle pour traiter chaque événement (à partir du deuxième élément, index 1)
-        for ($i = 1; $i < count($events); $i++) {
-            $dstart = $this->parser->getValue($events[$i], 'DTSTART'); // Date et heure de début
-            $dend = $this->parser->getValue($events[$i], 'DTEND');     // Date et heure de fin
-
+        $i = 1; $parser = $this->parser;
+        $parser->parseEvents(function ($event) use ($i) {
+            
             // Extraction des informations du champ 'SUMMARY' pour obtenir le titre et l'enseignant
-            $summary = explode(' - ', $this->parser->getValue($events[$i], 'SUMMARY'));
+            $summary = explode(' - ', $this->parser->getValue($event, 'SUMMARY'));
             $title = remove($summary[0], '*', '\\');  // Supprime les caractères indésirables du titre
             $teacher = count($summary) > 1 ? $summary[1] : 'Inconnu';  // Récupère l'enseignant ou 'Inconnu'
+            
+            $dstart = $this->parser->getValue($event, 'DTSTART'); // Date et heure de début
+            $dend = $this->parser->getValue($event, 'DTEND');     // Date et heure de fin
 
-            // Création de l'événement scolaire
-            $this->create(
-                $this->toDate($dstart),      // Conversion du champ 'DTSTART' en date
-                $this->toHour($dstart, 1),   // Conversion de l'heure de début
-                $this->toHour($dend, 1),     // Conversion de l'heure de fin
-                $title,                      // Titre de l'événement
-                $teacher                     // Enseignant
-            );
-        }
+            $hourStart = $this->toHour($dstart, 1);
+            $hourEnd = $this->toHour($dend, 1);
+
+            // Calcul du nombre de demi-journées nécessaires en fonction de la durée de l'événement
+            $halfDays = ceil(($hourEnd - $hourStart) / 2);
+
+            // On créer un événement en ajustant les heures pour chaque demi-journée
+            for ($j = 0; $j < $halfDays; $j++) {
+
+                $newHourStart = $hourStart + $j * 2; // Ajuste l'heure de début
+                $newHourEnd = min($newHourStart + 2, 18); // Ajuste l'heure de fin, ne dépasse pas 18h
+                
+                // Création de l'événement scolaire
+                $this->_create(
+                    $this->toDate($dstart),     // Conversion du champ 'DTSTART' en date
+                    $newHourStart,              // Heure de début de l'événement
+                    $newHourEnd,                // Heur de fin de l'événement
+                    $title,                     // Titre de l'événement
+                    $teacher                    // Enseignant
+                );
+            }
+
+            $i++;
+        });
     }
 
     /**
@@ -64,7 +77,7 @@ class SchoolEventManager {
      * @param string $teacher Enseignant responsable de l'événement
      * @return SchoolEvent L'événement scolaire créé
      */
-    public function create($date, $hour_start, $hour_end, $title, $teacher)
+    private function _create($date, $hour_start, $hour_end, $title, $teacher)
     {
         // Si aucun événement n'existe pour cette date, initialise un tableau vide
         if (!array_key_exists($date, $this->events)) {
@@ -72,7 +85,7 @@ class SchoolEventManager {
         }
 
         // Ajoute l'événement à la date donnée et retourne l'événement ajouté
-        return $this->add(
+        return $this->_add(
             $date,
             new SchoolEvent($date, $hour_start, $hour_end, $title, $teacher)
         );
@@ -85,20 +98,10 @@ class SchoolEventManager {
      * @param SchoolEvent $school_event Instance de SchoolEvent à ajouter
      * @return SchoolEvent Retourne l'événement ajouté
      */
-    public function add($date, SchoolEvent $school_event)
+    private function _add($date, SchoolEvent $school_event)
     {
         array_push($this->events[$date], $school_event);  // Ajoute l'événement au tableau des événements pour la date
         return $school_event;
-    }
-
-    /**
-     * Récupère tous les événements scolaires organisés par date.
-     * 
-     * @return array Tableau associatif des événements avec les dates comme clés
-     */
-    public function getSchoolEvents()
-    {
-        return $this->events;
     }
 
     /**
@@ -127,4 +130,37 @@ class SchoolEventManager {
             . substr($str, 4, 2) . '/'
             . substr($str, 0, 4);
     }
+
+    public function getSchoolEventsByDate($month, $year)
+    {
+        $ret = [];
+        foreach ($this->events as $date => $events) {
+            foreach ($events as $event) {
+                // Vérifie si l'événement appartient au mois et à l'année spécifiés
+                if ($event->getMonth() == $month && $event->getYear() == $year) {
+                    $ret[$date][] = $event;
+                }
+            }
+        }
+    
+        return $ret;
+    }
+
+    public function getMorningSchoolEvents($events)
+    {
+        // Filtrage des événements qui se déroulent le matin, puis réindexation
+        return array_values(array_filter($events, function($event) {
+            return $event->isMorning();  // Filtre les événements matinaux
+        }));
+    }
+
+    public function getAfternoonSchoolEvents($events)
+    {
+        // Filtrage des événements qui se déroulent l'après-midi, puis réindexation
+        return array_values(array_filter($events, function($event) {
+            return !$event->isMorning();  // Filtre les événements de l'après-midi
+        }));
+    }
+
+    public function getSchoolEvents() {  return $this->events; }
 }

@@ -77,13 +77,13 @@ class SchoolEvent {
     }
 
     /**
-     * Retourne le titre de l'événement.
+     * Retourne le date de l'événement complète au format jj/mm/YY
      * 
-     * @return string Titre de l'événement
+     * @return string Date de l'événement complète
      */
-    public function getTitle()
+    public function getCompleteDate()
     {
-        return $this->title;
+        return ($this->day . '/' . $this->month . '/' . $this->year);
     }
 
     /**
@@ -97,13 +97,14 @@ class SchoolEvent {
         return '<br> Titre : ' . $this->getTitle()
             . '<br> Prof : ' . $this->getTeacher()
             . '<br> Heure de début : ' . $this->getHourStart()
-            . '<br> Heure de fin : ' . $this->getHourEnd() . '<br><br>';
+            . '<br> Heure de fin : ' . $this->getHourEnd()
+            . '<br> Date : ' . $this->getCompleteDate() . '<br><br>';
     }
 
-    // Getters pour accéder aux propriétés privées
     public function getHourStart()  { return $this->hour_start; }  // Retourne l'heure de début
     public function getHourEnd()    { return $this->hour_end; }    // Retourne l'heure de fin
     public function getTeacher()    { return $this->teacher; }     // Retourne l'enseignant
+    public function getTitle()      { return $this->title; }       // Retourne le titre de l'événement
     public function getMonth()      { return $this->month; }       // Retourne le mois de l'événement
     public function getYear()       { return $this->year; }        // Retourne l'année de l'événement
     public function getDay()        { return $this->day; }         // Retourne le jour de l'événement
