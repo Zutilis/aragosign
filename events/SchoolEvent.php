@@ -117,6 +117,16 @@ class SchoolEvent implements JsonSerializable {
     }
 
     /**
+     * Retourne le date de l'événement complète au format YY-mm-jj
+     * 
+     * @return string Date de l'événement complète
+     */
+    public function getCompleteEnDate()
+    {
+        return sprintf('%04d-%02d-%02d', $this->year, $this->month, $this->day);
+    }
+
+    /**
      * Représentation sous forme de chaîne de l'événement.
      * Fournit un résumé des informations de l'événement (titre, enseignant, heure de début et fin).
      * 

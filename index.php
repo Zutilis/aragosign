@@ -43,14 +43,24 @@ if ($currentStep == 4 && isset($_POST['generatePdf'])) {
 	require_once('calendrier/CalendrierPDFGenerator.php');
 
 	try {
+		// Récupérer les absences des cours (event_absence_x) et des jours complets (full_day_absence_x)
+		$absences = ['eventAbsences' => [], 'fullDayAbsences' => []];
 
-		// print_r($_SESSION['school_events']);
+		foreach ($_POST as $key => $value) {
+			// Récupérer les absences liées aux cours
+			if (strpos($key, 'event_absence_') === 0)
+				$absences['eventAbsences'][] = $value;
 
-		$absences = isset($_POST['absences']) ? $_POST['absences'] : [];
+			// Récupérer les absences liées aux journées complètes
+			if (strpos($key, 'full_day_absence_') === 0)
+				$absences['fullDayAbsences'][] = $value;
+		}
+
 		$pdfFilePath = generatePdfFileName($_SESSION['nom'], $_SESSION['prenom']);
+
 		$calendrierOutput = new CalendrierPDFGenerator($_SESSION, $pdfFilePath, $absences);
 		$calendrierOutput->generate();
-		echo '<p>PDF généré avec succès !</p>';
+
 	} catch (Exception $e) {
 		echo '<div class="form-error"><p class="form-error-title">Une erreur est survenue : ' . $e->getMessage() . '</p></div>';
 	}
@@ -213,7 +223,7 @@ if ($currentStep == 4 && isset($_POST['generatePdf'])) {
 							</div>
 							<div class="right">
 								<button type="submit" name="generatePdf" class="next-step">
-									<p class="form-nav-text">Générer PDF</p>
+									<p class="form-nav-text">Générer</p>
 									<img src="assets/svg/navnext.svg" alt="">
 								</button>
 							</div>
@@ -262,12 +272,18 @@ if ($currentStep == 4 && isset($_POST['generatePdf'])) {
 								absenceType.change(function() {
 									const selectedValue = $(this).val();
 									if (selectedValue === 'jour_entier') {
+										fullDayInput.prop('required', true);
+										eventSelect.prop('required', false);
 										fullDayInput.show();
 										eventSelect.hide();
 									} else if (selectedValue === 'cours') {
+										fullDayInput.prop('required', false);
+										eventSelect.prop('required', true);
 										fullDayInput.hide();
 										eventSelect.show();
 									} else {
+										fullDayInput.prop('required', true);
+										eventSelect.prop('required', false);
 										fullDayInput.hide();
 										eventSelect.hide();
 									}

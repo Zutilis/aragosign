@@ -2,8 +2,9 @@
 
 require_once('fpdf/fpdf.php');
 
-class CalendrierPDFBuilder {
-    
+class CalendrierPDFBuilder
+{
+
     const W_SIGNATURE = 20; // Largeur de la colonne Signature
     const W_FORMATEUR = 20; // Largeur de la colonne Formateur
     const W_MATIERE = 35;   // Largeur de la colonne Matière
@@ -198,12 +199,25 @@ class CalendrierPDFBuilder {
      */
     private function _addHourEvent($event, $h_event)
     {
-        $is_null = $event == null;
+        // Déterminer si l'événement est null ou absent
+        $is_null = $event === null;
+        $is_absent = !$is_null && $event->isAbsent();
+
+        // Préparer les valeurs de texte selon l'état de l'événement
+        if ($is_null) {
+            $hourTxt = $titleTxt = $teacherTxt = '';
+        } elseif ($is_absent) {
+            $hourTxt = $titleTxt = $teacherTxt = 'Abs';
+        } else {
+            $hourTxt = strval($event->getDuration());
+            $titleTxt = $event->getTitle();
+            $teacherTxt = $event->getTeacher();
+        }
 
         $this->_setFontSize(6);
-        $this->_hourEventCell(self::W_HEURE, $h_event, $is_null ? '' : strval($event->getDuration()), $is_null, 5);
-        $this->_hourEventCell(self::W_MATIERE, $h_event, $is_null ? '' : $event->getTitle(), $is_null, 25);
-        $this->_hourEventCell(self::W_FORMATEUR, $h_event, $is_null ? '' : $event->getTeacher(), $is_null, 15);
+        $this->_hourEventCell(self::W_HEURE, $h_event, $hourTxt, $is_null, 5);
+        $this->_hourEventCell(self::W_MATIERE, $h_event, $titleTxt, $is_null, 25);
+        $this->_hourEventCell(self::W_FORMATEUR, $h_event, $teacherTxt, $is_null, 15);
         $this->_hourEventCell(self::W_SIGNATURE, $h_event, ' ', false);
     }
 
@@ -215,7 +229,7 @@ class CalendrierPDFBuilder {
      * @param bool $fill Si la cellule doit être remplie ou non
      * @return void
      */
-    private function _hourEventCell($w_cell, $h_cell, $txt, $fill = false, $truncate=25)
+    private function _hourEventCell($w_cell, $h_cell, $txt, $fill = false, $truncate = 25)
     {
         $this->pdf->Cell($w_cell, $h_cell, truncate($txt, $truncate), 1, 0, 'C', $fill, '');
     }

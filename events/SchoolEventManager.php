@@ -47,11 +47,11 @@ class SchoolEventManager {
      */
     public function loadAll()
     {
-        $parser = $this->parser;
-        $this->parser->parseEvents(function ($event) 
+        $id=0;
+        $this->parser->parseEvents(function ($event) use (&$id) 
         {
-            $i = 1; $id=0; 
-
+            $i = 1;
+            // echo $id;
             // Extraction des informations du champ 'SUMMARY' pour obtenir le titre et l'enseignant
             $summary = explode(' - ', $this->parser->getValue($event, 'SUMMARY'));
             $title = remove($summary[0], '*', '\\');  // Supprime les caractères indésirables du titre

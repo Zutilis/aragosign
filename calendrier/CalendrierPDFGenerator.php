@@ -3,10 +3,12 @@
 require_once('./events/SchoolEventManager.php');
 require_once('CalendrierPDFBuilder.php');
 
-class CalendrierPDFGenerator {
-    
+class CalendrierPDFGenerator
+{
+
     private $pdfFilePath;        // Chemin du fichier PDF de sortie
     private $calendrier;         // Instance du générateur de calendrier PDF
+    private $absences;
     private $data;               // Données utilisateur extraites du formulaire
 
     /**
@@ -16,13 +18,14 @@ class CalendrierPDFGenerator {
      * @param string $pdfFilePath Chemin du fichier PDF à générer
      * @param string $planningFilePath Chemin du fichier ICS
      */
-    public function __construct($data, $pdfFilePath, )
+    public function __construct($data, $pdfFilePath, $absences)
     {
         $this->pdfFilePath = $pdfFilePath;
+        $this->absences = $absences;
 
         // Extraction des données du formulaire POST
         $this->_extractPost($data);
-        
+
         // Initialisation du gestionnaire d'événements et du calendrier PDF
         $this->_init();
     }
@@ -34,10 +37,28 @@ class CalendrierPDFGenerator {
      */
     public function generate()
     {
-        foreach ($this->data['school_events'] as $eventsPerDay) {
+        foreach ($this->data['school_events'] as $eventsPerDay) 
+        {
+            // Pour chaque événement dans une journée
+            foreach ($eventsPerDay as $event) {
+
+                foreach ($this->absences['fullDayAbsences'] as $day) {
+                    if ($event->getCompleteEnDate() === $day)
+                        $event->setAbsent(true);
+                }
+
+                // Vérification si l'événement est dans la liste des absences
+                foreach ($this->absences['eventAbsences'] as $absence) {
+                    if ($event->getId() === intval($absence))
+                        $event->setAbsent(true);
+                }
+
+            }
+
+            // Ajout des événements journaliers dans le PDF (comme avant)
             $this->calendrier->addDailyEvents(
-                $eventsPerDay[0]->getCompleteDate(), 
-                SchoolEventManager::getMorningSchoolEvents($eventsPerDay), 
+                $eventsPerDay[0]->getCompleteDate(),
+                SchoolEventManager::getMorningSchoolEvents($eventsPerDay),
                 SchoolEventManager::getAfternoonSchoolEvents($eventsPerDay)
             );
         }
@@ -45,7 +66,6 @@ class CalendrierPDFGenerator {
         // Génère et télécharge le fichier PDF à l'emplacement spécifié
         $this->calendrier->output($this->pdfFilePath);
     }
-
     /**
      * Initialisation : crée le gestionnaire d'événements et génère l'entête du PDF.
      * 
