@@ -76,7 +76,7 @@
 							<div class="right">
 								<button type="button" class="form-nav-next">
 									<p class="form-nav-text">Suivant</p>
-									<img src="assets/navnext.svg" alt="">
+									<img src="assets/svg/navnext.svg" alt="">
 								</button>
 							</div>
 						</div>
@@ -101,14 +101,14 @@
 						<div class="form-nav">
 							<div class="left">
 								<button type="button" class="form-nav-prev">
-									<img src="assets/navprev.svg" alt="">
+									<img src="assets/svg/navprev.svg" alt="">
 									<p class="form-nav-text">Précédent</p>
 								</button>
 							</div>
 							<div class="right">
 								<button type="button" class="form-nav-next">
 									<p class="form-nav-text">Suivant</p>
-									<img src="assets/navnext.svg" alt="">
+									<img src="assets/svg/navnext.svg" alt="">
 								</button>
 							</div>
 						</div>
@@ -124,11 +124,11 @@
 							<label for="planningFile" class="custom-file-label">Choisir un fichier (format .ics)</label>
 							<div id="planningFilePreview" class="file-preview" style="display:none;">
 								<div class="file-image">
-									<img src="assets/document.svg" alt="">
+									<img src="assets/svg/document.svg" alt="">
 								</div>
 								<div class="file-name-preview"></div>
 								<button type="button" id="planningFileCancel" class="cancel-btn file-image" onclick="cancelFile('planningFile', 'planningFilePreview', 'planningFileCancel')">
-									<img src="assets/rubbish.svg" alt="">
+									<img src="assets/svg/rubbish.svg" alt="">
 								</button>
 							</div>
 						</div>
@@ -139,14 +139,14 @@
 						<div class="form-nav">
 							<div class="left">
 								<button type="button" class="form-nav-prev">
-									<img src="assets/navprev.svg" alt="">
+									<img src="assets/svg/navprev.svg" alt="">
 									<p class="form-nav-text">Précédent</p>
 								</button>
 							</div>
 							<div class="right">
 								<button type="button" class="form-nav-next">
 									<p class="form-nav-text">Suivant</p>
-									<img src="assets/navnext.svg" alt="">
+									<img src="assets/svg/navnext.svg" alt="">
 								</button>
 							</div>
 						</div>
@@ -161,7 +161,7 @@
 						<div class="form-nav">
 							<div class="left">
 								<button type="button" class="form-nav-prev">
-									<img src="assets/navprev.svg" alt="">
+									<img src="assets/svg/navprev.svg" alt="">
 									<p class="form-nav-text">Précédent</p>
 								</button>
 							</div>

@@ -54,7 +54,7 @@ class CalendrierPDFBuilder {
         $this->_ln();
 
         // Ajout du logo
-        $this->pdf->Image('assets/arago.jpeg', $this->left_margin, 10, 20, 20, 'JPEG');
+        $this->pdf->Image('assets/images/arago.jpeg', $this->left_margin, 10, 20, 20, 'JPEG');
 
         // Informations utilisateur (nom, prénom, entreprise, classe)
         $this->_setFontSize(7);
