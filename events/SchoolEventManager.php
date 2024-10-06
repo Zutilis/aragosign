@@ -1,4 +1,5 @@
 <?php
+require_once('utils/Utils.php');
 require_once('parser/ICSParser.php');
 require_once('SchoolEvent.php');
 
@@ -7,6 +8,22 @@ class SchoolEventManager {
     private $events;   // Tableau associatif des événements par date
     private $filename; // Nom du fichier ICS à parser
     private $parser;   // Instance de l'analyseur ICS pour extraire les événements
+
+    public static function getMorningSchoolEvents($events)
+    {
+        // Filtrage des événements qui se déroulent le matin, puis réindexation
+        return array_values(array_filter($events, function($event) {
+            return $event->isMorning();  // Filtre les événements matinaux
+        }));
+    }
+
+    public static function getAfternoonSchoolEvents($events)
+    {
+        // Filtrage des événements qui se déroulent l'après-midi, puis réindexation
+        return array_values(array_filter($events, function($event) {
+            return !$event->isMorning();  // Filtre les événements de l'après-midi
+        }));
+    }
 
     /**
      * Constructeur de la classe SchoolEventManager.
@@ -30,9 +47,11 @@ class SchoolEventManager {
      */
     public function loadAll()
     {
-        $i = 1; $parser = $this->parser;
-        $parser->parseEvents(function ($event) use ($i) {
-            
+        $parser = $this->parser;
+        $this->parser->parseEvents(function ($event) 
+        {
+            $i = 1; $id=0; 
+
             // Extraction des informations du champ 'SUMMARY' pour obtenir le titre et l'enseignant
             $summary = explode(' - ', $this->parser->getValue($event, 'SUMMARY'));
             $title = remove($summary[0], '*', '\\');  // Supprime les caractères indésirables du titre
@@ -55,14 +74,15 @@ class SchoolEventManager {
                 
                 // Création de l'événement scolaire
                 $this->_create(
+                    $id,
                     $this->toDate($dstart),     // Conversion du champ 'DTSTART' en date
                     $newHourStart,              // Heure de début de l'événement
                     $newHourEnd,                // Heur de fin de l'événement
                     $title,                     // Titre de l'événement
                     $teacher                    // Enseignant
                 );
+                $id++;
             }
-
             $i++;
         });
     }
@@ -77,7 +97,7 @@ class SchoolEventManager {
      * @param string $teacher Enseignant responsable de l'événement
      * @return SchoolEvent L'événement scolaire créé
      */
-    private function _create($date, $hour_start, $hour_end, $title, $teacher)
+    private function _create($id, $date, $hour_start, $hour_end, $title, $teacher)
     {
         // Si aucun événement n'existe pour cette date, initialise un tableau vide
         if (!array_key_exists($date, $this->events)) {
@@ -87,7 +107,7 @@ class SchoolEventManager {
         // Ajoute l'événement à la date donnée et retourne l'événement ajouté
         return $this->_add(
             $date,
-            new SchoolEvent($date, $hour_start, $hour_end, $title, $teacher)
+            new SchoolEvent($id, $date, $hour_start, $hour_end, $title, $teacher)
         );
     }
 
@@ -131,7 +151,7 @@ class SchoolEventManager {
             . substr($str, 0, 4);
     }
 
-    public function getSchoolEventsByDate($month, $year)
+    public function getSchoolEventsByDate($year, $month)
     {
         $ret = [];
         foreach ($this->events as $date => $events) {
@@ -144,22 +164,6 @@ class SchoolEventManager {
         }
     
         return $ret;
-    }
-
-    public function getMorningSchoolEvents($events)
-    {
-        // Filtrage des événements qui se déroulent le matin, puis réindexation
-        return array_values(array_filter($events, function($event) {
-            return $event->isMorning();  // Filtre les événements matinaux
-        }));
-    }
-
-    public function getAfternoonSchoolEvents($events)
-    {
-        // Filtrage des événements qui se déroulent l'après-midi, puis réindexation
-        return array_values(array_filter($events, function($event) {
-            return !$event->isMorning();  // Filtre les événements de l'après-midi
-        }));
     }
 
     public function getSchoolEvents() {  return $this->events; }

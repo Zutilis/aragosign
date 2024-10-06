@@ -1,10 +1,10 @@
 <?php
 
+require_once('./events/SchoolEventManager.php');
 require_once('CalendrierPDFBuilder.php');
 
 class CalendrierPDFGenerator {
     
-    private $schoolManager;     // Instance du gestionnaire d'événements
     private $pdfFilePath;        // Chemin du fichier PDF de sortie
     private $calendrier;         // Instance du générateur de calendrier PDF
     private $data;               // Données utilisateur extraites du formulaire
@@ -16,9 +16,8 @@ class CalendrierPDFGenerator {
      * @param string $pdfFilePath Chemin du fichier PDF à générer
      * @param string $planningFilePath Chemin du fichier ICS
      */
-    public function __construct($data, $schoolManager, $pdfFilePath, )
+    public function __construct($data, $pdfFilePath, )
     {
-        $this->schoolManager = $schoolManager;
         $this->pdfFilePath = $pdfFilePath;
 
         // Extraction des données du formulaire POST
@@ -35,13 +34,11 @@ class CalendrierPDFGenerator {
      */
     public function generate()
     {
-        $allEvents = $this->schoolManager->getSchoolEventsByDate($this->data['month'], $this->data['year']);
-
-        foreach ($allEvents as $eventsPerDay) {
+        foreach ($this->data['school_events'] as $eventsPerDay) {
             $this->calendrier->addDailyEvents(
                 $eventsPerDay[0]->getCompleteDate(), 
-                $this->schoolManager->getMorningSchoolEvents($eventsPerDay), 
-                $this->schoolManager->getAfternoonSchoolEvents($eventsPerDay)
+                SchoolEventManager::getMorningSchoolEvents($eventsPerDay), 
+                SchoolEventManager::getAfternoonSchoolEvents($eventsPerDay)
             );
         }
 
@@ -69,17 +66,15 @@ class CalendrierPDFGenerator {
      */
     private function _extractPost($data)
     {
-        // Sépare l'année et le mois à partir du champ 'month_planning'
-        $month_planning = explode('-', $data['month_planning']);
-
-        // Remplit les informations utilisateur dans la propriété $this->data
+        // Remplir les informations utilisateur dans la propriété $this->data
         $this->data = [
-            'year' => intval($month_planning[0]),   // Année
-            'month' => intval($month_planning[1]),  // Mois
-            'prenom' => $data['prenom'],            // Prénom de l'utilisateur
-            'nom' => $data['nom'],                  // Nom de l'utilisateur
-            'entreprise' => $data['entreprise'],    // Entreprise de l'utilisateur
-            'classe' => $data['classe'],            // Classe de l'utilisateur
+            'school_events' => $data['school_events'],      // Utilisez l'événement désérialisé ou tel quel
+            'year' => intval($data['month_planning'][0]),   // Année
+            'month' => intval($data['month_planning'][1]),  // Mois
+            'prenom' => $data['prenom'],                    // Prénom de l'utilisateur
+            'nom' => $data['nom'],                          // Nom de l'utilisateur
+            'entreprise' => $data['entreprise'],            // Entreprise de l'utilisateur
+            'classe' => $data['classe'],                    // Classe de l'utilisateur
         ];
     }
 }

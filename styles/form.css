@@ -1,0 +1,196 @@
+/* Styles pour les groupes de formulaires */
+.form-group {
+    margin: 2rem 0 1rem 0;
+}
+
+label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--grey);
+    font-size: var(--font-size-l);
+}
+
+/* Barre de progression */
+.progress {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+    gap: 2%;
+    margin-bottom: 20px;
+}
+
+.progress-container {
+    height: 10px;
+    width: 100%;
+    background-color: var(--dark-off-white);
+    border-radius: 5px;
+}
+
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background-color: var(--blue);
+    border-radius: 5px;
+    transition: all 0.5s ease-in-out;
+}
+
+/* Champ de formulaire commun */
+input[type="file"], input[type="text"], 
+input[type="date"], input[type="month"], select {
+    width: 100%;
+    height: 38px;
+    padding: 0.5rem;
+    border: 2px solid var(--dark-white);
+    border-radius: 4px;
+}
+
+input[type="file"]:focus, input[type="text"]:focus, 
+input[type="date"]:focus, input[type="month"]:focus, 
+select:focus, .custom-file-label:focus {
+	border: 2px solid var(--dark-blue);
+}
+
+input[type="month"] {
+	text-transform: capitalize;
+}
+
+/* Suppression des fichiers d'absence */
+#absence-section {
+	display: flex;
+	flex-direction: column;
+}
+
+#absence-section:empty {
+	margin: 0;
+}
+
+.absence-item {
+	display: flex;
+	justify-content: flex-start; /* Aligner les éléments au début */
+	align-items: center;
+	flex-direction: row;
+	width: 100%;
+	height: 38px;
+	gap: 2%;
+	margin-bottom: 10px;
+}
+
+.absence-item select, 
+.absence-item input {
+	flex: 1; /* Permet aux champs de s'étirer pour occuper tout l'espace disponible */
+}
+
+.absence-cancel {
+	width: 20px;
+	height: 20px;
+	background: none;
+	border: none;
+	padding: 0;
+	cursor: pointer;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	flex-shrink: 0; /* Empêche le bouton de rétrécir */
+}
+
+.absence-cancel img {
+	width: 100%;
+	height: 100%;
+	object-fit: contain; /* S'assure que l'image est contenue dans le bouton */
+}
+
+/* Boutons dans le formulaire */
+.form-button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: var(--blue);
+    border: none;
+    border-radius: 4px;
+    color: #fff;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.form-button:hover {
+    background-color: var(--dark-blue);
+}
+
+/* Gestion des erreurs de formulaire */
+.form-error {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: var(--black);
+    margin: 2rem 0 1rem 0;
+}
+
+.form-error-title {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.form-error-code {
+    font-weight: 600;
+    font-size: 0.65rem;
+    text-align: center;
+}
+
+/* Navigation dans les formulaires */
+.form-nav {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: 1fr;
+    margin-top: 2rem;
+}
+
+.form-nav button, .form-nav input {
+    background: none;
+    border: none;
+    color: var(--blue);
+    cursor: pointer;
+    display: flex;
+    flex-direction: row;
+}
+
+.right {
+	display: flex;
+	justify-content: right;
+}
+
+.form-nav-prev {
+    grid-area: 1 / 1 / 2 / 2;
+}
+
+.form-nav-next {
+    grid-area: 1 / 2 / 2 / 3;
+}
+
+.form-nav-download {
+    color: var(--white);
+    background-color: var(--blue);
+    border-radius: 10px;
+}
+
+.form-nav-text {
+	color: var(--blue)
+}
+
+.form-nav svg, .form-nav img {
+    height: 1rem;
+    width: 1rem;
+}
+
+/* Espaces obligatoires */
+.obligatory {
+    display: flex;
+    flex-direction: row;
+}
+
+.obligatory-char {
+    color: var(--red);
+    padding: 0.15rem;
+    font-size: var(--font-size-l);
+}

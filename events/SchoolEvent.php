@@ -1,7 +1,8 @@
 <?php
 
-class SchoolEvent {
+class SchoolEvent implements JsonSerializable {
 
+    private $is_absent;   // True si l'utilisateur est absent
     private $hour_start;  // Heure de début de l'événement (ex: 9 pour 9h00)
     private $hour_end;    // Heure de fin de l'événement (ex: 12 pour 12h00)
     private $teacher;     // Enseignant responsable de l'événement
@@ -9,6 +10,7 @@ class SchoolEvent {
     private $month;       // Mois de l'événement (ex: 5 pour mai)
     private $year;        // Année de l'événement (ex: 2024)
     private $day;         // Jour de l'événement (ex: 12 pour le 12 du mois)
+    private $id;
 
     /**
      * Constructeur de la classe SchoolEvent.
@@ -20,12 +22,14 @@ class SchoolEvent {
      * @param string $title Titre de l'événement
      * @param string $teacher Nom de l'enseignant responsable
      */
-    public function __construct($date, $hour_start, $hour_end, $title, $teacher) 
+    public function __construct($id, $date, $hour_start, $hour_end, $title, $teacher) 
     {
         $this->hour_start = $hour_start;
         $this->hour_end = $hour_end;
         $this->teacher = $teacher;
+        $this->is_absent = false;
         $this->title = $title;
+        $this->id = $id;
 
         // Décompose la date en jour, mois et année à partir du format 'jj/mm/aaaa'
         $splited_date = explode('/', $date);
@@ -34,6 +38,21 @@ class SchoolEvent {
         $this->year = intval($splited_date[2]);
     }
 
+    public function jsonSerialize() : mixed {
+        return [
+            'id' => $this->id,
+            'date' => $this->getCompleteDate(),
+            'is_absent' => $this->is_absent,
+            'hourStart' => $this->hour_start,
+            'hourEnd' => $this->hour_end,
+            'title' => $this->title,
+            'teacher' => $this->teacher,
+            'month' => $this->month,
+            'year' => $this->year,
+            'day' => $this->day,
+        ];
+    }
+    
     /**
      * Définit l'heure de début de l'événement.
      * 
@@ -54,6 +73,17 @@ class SchoolEvent {
     public function setHourEnd($hour_end)
     {
         $this->hour_end = $hour_end;
+    }
+
+    /**
+     * Définit si l'utilisateur est absent à l'événement.
+     * 
+     * @param boolean $is_absent True si l'utilisateur est absent
+     * @return void
+     */
+    public function setAbsent($is_absent)
+    {
+        $this->is_absent = $is_absent;
     }
 
     /**
@@ -104,8 +134,10 @@ class SchoolEvent {
     public function getHourStart()  { return $this->hour_start; }  // Retourne l'heure de début
     public function getHourEnd()    { return $this->hour_end; }    // Retourne l'heure de fin
     public function getTeacher()    { return $this->teacher; }     // Retourne l'enseignant
+    public function isAbsent()      { return $this->is_absent; }   // Retourne si l'utilisateur est absent à l'événement
     public function getTitle()      { return $this->title; }       // Retourne le titre de l'événement
     public function getMonth()      { return $this->month; }       // Retourne le mois de l'événement
     public function getYear()       { return $this->year; }        // Retourne l'année de l'événement
     public function getDay()        { return $this->day; }         // Retourne le jour de l'événement
+    public function getId()         { return $this->id; }          // Retourne l'id de l'événement
 }
