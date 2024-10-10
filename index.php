@@ -74,7 +74,7 @@ if ($currentStep == 4 && isset($_POST['generatePdf'])) {
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Formulaire Multi-étapes</title>
+	<title>Générateur attestation mensuelle</title>
 	<link rel="stylesheet" href="styles/main.css">
 	<link rel="stylesheet" href="styles/form.css">
 	<link rel="stylesheet" href="styles/file.css">
