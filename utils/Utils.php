@@ -38,10 +38,10 @@ function truncate($str, $nb_chars)
 /**
  * Convertit un numéro de mois (1 à 12) en son équivalent en français.
  * 
- * @param int $nbr_month Numéro du mois (1 pour janvier, 12 pour décembre)
+ * @param int $nb_month Numéro du mois (1 pour janvier, 12 pour décembre)
  * @return string Le nom du mois en français ou "null" si le numéro est invalide
  */
-function monthToFrench($nbr_month)
+function monthToFrench($nb_month)
 {
     // Tableau associatif pour la correspondance des mois
     $months = [
@@ -60,5 +60,5 @@ function monthToFrench($nbr_month)
     ];
 
     // Vérification si le numéro du mois est valide, sinon retourne "null"
-    return $months[$nbr_month] ?? "null";
+    return $months[$nb_month] ?? "null";
 }
