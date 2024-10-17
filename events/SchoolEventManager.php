@@ -6,7 +6,6 @@ require_once('SchoolEvent.php');
 class SchoolEventManager {
     
     private $events;   // Tableau associatif des événements par date
-    private $filename; // Nom du fichier ICS à parser
     private $parser;   // Instance de l'analyseur ICS pour extraire les événements
 
     public static function getMorningSchoolEvents($events)
@@ -34,10 +33,9 @@ class SchoolEventManager {
     public function __construct($filename)
     {
         $this->events = [];  // Initialisation d'un tableau vide pour stocker les événements
-        $this->filename = $filename;
 
         // Création d'une instance du parser ICS avec le fichier fourni
-        $this->parser = new ICSParser($this->filename);
+        $this->parser = new ICSParser($filename);
     }
 
     /**
