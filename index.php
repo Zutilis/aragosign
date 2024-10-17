@@ -14,7 +14,7 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<div class="calendrier">
 		<div class="calendrier-container">
-			<h2>AragoSign | Générateur attestation mensuelle</h2>
+			<h2>Générateur attestation mensuelle</h2>
 			<?php $currentStep = include 'process.php'; ?>
 			<div class="progress">
 				<div class="progress-container">
