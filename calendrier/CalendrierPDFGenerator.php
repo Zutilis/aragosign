@@ -8,7 +8,7 @@ class CalendrierPDFGenerator
 
     private $pdfFilePath;        // Chemin du fichier PDF de sortie
     private $calendrier;         // Instance du générateur de calendrier PDF
-    private $absences;
+    private $absences;           // Liste d'absences
     private $data;               // Données utilisateur extraites du formulaire
 
     /**

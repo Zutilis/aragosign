@@ -16,8 +16,8 @@ class ICSParser {
      */
     public function parseLines(callable $callback)
     {
-        $currentEvent = '';
-        $insideEvent = false;
+        $currentLine = '';
+        $insideLine = false;
 
         // Ouvre le fichier en lecture
         $handle = fopen($this->filename, "r");
@@ -35,7 +35,7 @@ class ICSParser {
 
                 // Si la ligne précédente contient des informations, on la traite
                 if (!empty($previousLine)) {
-                    $this->processLine($previousLine, $insideEvent, $currentEvent, $callback);
+                    $this->processLine($previousLine, $insideLine, $currentLine, $callback);
                 }
 
                 // Mise à jour de la ligne précédente
@@ -44,7 +44,7 @@ class ICSParser {
 
             // Traite la dernière ligne si elle contient quelque chose
             if (!empty($previousLine)) {
-                $this->processLine($previousLine, $insideEvent, $currentEvent, $callback);
+                $this->processLine($previousLine, $insideLine, $currentLine, $callback);
             }
 
             fclose($handle); // Ferme le fichier après traitement
@@ -57,31 +57,31 @@ class ICSParser {
      * Traite une ligne lue, met à jour l'événement actuel ou appelle le callback.
      *
      * @param string $line La ligne à traiter
-     * @param bool &$insideEvent Référence pour savoir si on est dans un événement
-     * @param string &$currentEvent Référence de l'événement en cours de construction
+     * @param bool &$insideLine Référence pour savoir si on est dans un événement
+     * @param string &$currentLine Référence de l'événement en cours de construction
      * @param callable $callback Fonction à appeler lorsque l'événement est complet
      */
-    private function processLine($line, &$insideEvent, &$currentEvent, callable $callback)
+    private function processLine($line, &$insideLine, &$currentLine, callable $callback)
     {
         // Détection du début d'un événement
         if (strpos($line, 'BEGIN:VEVENT') !== false) {
-            $insideEvent = true;
-            $currentEvent = $line . "\n"; // Commence un nouvel événement
+            $insideLine = true;
+            $currentLine = $line . "\n"; // Commence un nouvel événement
         } 
         // Détection de la fin de l'événement
         elseif (strpos($line, 'END:VEVENT') !== false) {
-            $currentEvent .= $line . "\n"; // Ajoute la ligne de fin
-            $insideEvent = false;
+            $currentLine .= $line . "\n"; // Ajoute la ligne de fin
+            $insideLine = false;
 
             // Appel de la fonction de callback pour traiter l'événement
-            $callback($currentEvent);
+            $callback($currentLine);
 
             // Réinitialisation pour le prochain événement
-            $currentEvent = '';
+            $currentLine = '';
         } 
         // Pendant que nous sommes dans un événement, on accumule les lignes
-        elseif ($insideEvent) {
-            $currentEvent .= $line . "\n";
+        elseif ($insideLine) {
+            $currentLine .= $line . "\n";
         }
     }
 

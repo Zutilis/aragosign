@@ -179,8 +179,8 @@ class CalendrierPDFBuilder
 
     /**
      * Ajoute une ligne pour un événement (matin et après-midi).
-     * @param object|null $morning_event Événement du matin
-     * @param object|null $afternoon_event Événement de l'après-midi
+     * @param SchoolEvent|null $morning_event Événement du matin
+     * @param SchoolEvent|null $afternoon_event Événement de l'après-midi
      * @param float $h_event Hauteur de la cellule de l'événement
      * @return void
      */
@@ -193,7 +193,7 @@ class CalendrierPDFBuilder
 
     /**
      * Ajoute une cellule pour un événement spécifique (matin ou après-midi).
-     * @param object|null $event L'événement à ajouter
+     * @param SchoolEvent|null $event L'événement à ajouter
      * @param float $h_event Hauteur de la cellule
      * @return void
      */
@@ -215,10 +215,10 @@ class CalendrierPDFBuilder
         }
 
         $this->_setFontSize(6);
-        $this->_hourEventCell(self::W_HEURE, $h_event, $hourTxt, $is_null, 5);
-        $this->_hourEventCell(self::W_MATIERE, $h_event, $titleTxt, $is_null, 25);
-        $this->_hourEventCell(self::W_FORMATEUR, $h_event, $teacherTxt, $is_null, 15);
-        $this->_hourEventCell(self::W_SIGNATURE, $h_event, ' ', false);
+        $this->_addHourEventCell(self::W_HEURE, $h_event, $hourTxt, $is_null, 5);
+        $this->_addHourEventCell(self::W_MATIERE, $h_event, $titleTxt, $is_null, 25);
+        $this->_addHourEventCell(self::W_FORMATEUR, $h_event, $teacherTxt, $is_null, 15);
+        $this->_addHourEventCell(self::W_SIGNATURE, $h_event, ' ', false);
     }
 
     /**
@@ -229,7 +229,7 @@ class CalendrierPDFBuilder
      * @param bool $fill Si la cellule doit être remplie ou non
      * @return void
      */
-    private function _hourEventCell($w_cell, $h_cell, $txt, $fill = false, $truncate = 25)
+    private function _addHourEventCell($w_cell, $h_cell, $txt, $fill = false, $truncate = 25)
     {
         $this->pdf->Cell($w_cell, $h_cell, truncate($txt, $truncate), 1, 0, 'C', $fill, '');
     }
