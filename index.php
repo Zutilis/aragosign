@@ -4,7 +4,7 @@
 <head>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>Générateur attestation mensuelle</title>
+	<title>AragoSign</title>
 	<link rel="stylesheet" href="styles/main.css">
 	<link rel="stylesheet" href="styles/form.css">
 	<link rel="stylesheet" href="styles/file.css">
@@ -14,7 +14,7 @@
 	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
 	<div class="calendrier">
 		<div class="calendrier-container">
-			<h2>Générateur attestation mensuelle</h2>
+			<h2>AragoSign | Générateur attestation mensuelle</h2>
 			<?php $currentStep = include 'process.php'; ?>
 			<div class="progress">
 				<div class="progress-container">
