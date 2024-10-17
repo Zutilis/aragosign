@@ -10,11 +10,11 @@ class ICSParser {
     }
 
     /**
-     * Fonction principale pour lire et traiter les événements directement.
+     * Fonction principale pour lire et traiter les événements/lignes directement.
      * 
      * @param callable $callback Fonction de traitement à appeler pour chaque événement
      */
-    public function parseEvents(callable $callback)
+    public function parseLines(callable $callback)
     {
         $currentEvent = '';
         $insideEvent = false;

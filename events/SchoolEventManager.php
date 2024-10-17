@@ -46,17 +46,17 @@ class SchoolEventManager {
     public function loadAll()
     {
         $id=0;
-        $this->parser->parseEvents(function ($event) use (&$id) 
+        $this->parser->parseLines(function ($line) use (&$id) 
         {
             $i = 1;
             // echo $id;
             // Extraction des informations du champ 'SUMMARY' pour obtenir le titre et l'enseignant
-            $summary = explode(' - ', $this->parser->getValue($event, 'SUMMARY'));
+            $summary = explode(' - ', $this->parser->getValue($line, 'SUMMARY'));
             $title = remove($summary[0], '*', '\\');  // Supprime les caractères indésirables du titre
             $teacher = count($summary) > 1 ? $summary[1] : '';  // Récupère l'enseignant ou 'Inconnu'
             
-            $dstart = $this->parser->getValue($event, 'DTSTART'); // Date et heure de début
-            $dend = $this->parser->getValue($event, 'DTEND');     // Date et heure de fin
+            $dstart = $this->parser->getValue($line, 'DTSTART'); // Date et heure de début
+            $dend = $this->parser->getValue($line, 'DTEND');     // Date et heure de fin
 
             $hourStart = $this->toHour($dstart);
             $hourEnd = $this->toHour($dend);
