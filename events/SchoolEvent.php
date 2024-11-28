@@ -10,7 +10,7 @@ class SchoolEvent implements JsonSerializable {
     private $month;       // Mois de l'événement (ex: 5 pour mai)
     private $year;        // Année de l'événement (ex: 2024)
     private $day;         // Jour de l'événement (ex: 12 pour le 12 du mois)
-    private $id;
+    private $id;          // Identifiant de l'événement
 
     /**
      * Constructeur de la classe SchoolEvent.
