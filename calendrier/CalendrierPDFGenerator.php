@@ -1,10 +1,8 @@
 <?php
-
 require_once('./events/SchoolEventManager.php');
 require_once('CalendrierPDFBuilder.php');
 
-class CalendrierPDFGenerator
-{
+class CalendrierPDFGenerator{
 
     private $pdfFilePath;        // Chemin du fichier PDF de sortie
     private $calendrier;         // Instance du générateur de calendrier PDF

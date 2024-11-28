@@ -1,9 +1,7 @@
 <?php
-
 require_once('fpdf/fpdf.php');
 
-class CalendrierPDFBuilder
-{
+class CalendrierPDFBuilder {
 
     const W_SIGNATURE = 20; // Largeur de la colonne Signature
     const W_FORMATEUR = 20; // Largeur de la colonne Formateur

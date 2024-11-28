@@ -3,8 +3,7 @@ require_once('utils/Utils.php');
 require_once('parser/ICSParser.php');
 require_once('SchoolEvent.php');
 
-class SchoolEventManager
-{
+class SchoolEventManager {
 
     private $events;   // Tableau associatif des événements par date
     private $parser;   // Instance de l'analyseur ICS pour extraire les événements
